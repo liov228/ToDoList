@@ -17,40 +17,7 @@ class App extends React.Component {
             edited: 0,
         };
     }
-
-    setModal = (newModalState) => {
-        this.setState({modal: newModalState})
-    }
-
-    setEditModal = (newModalState) => {
-        this.setState({editModal: newModalState})
-    }
-
-    createTask = (newTaskData) => {
-        newTaskData.id = this.state.tasks[this.state.tasks.length - 1].id + 1;
-        this.setState({tasks: [...this.state.tasks, newTaskData]});
-    }
-
-    editTask = (task) => {
-        this.setState({editModal: true});
-        this.setState({edited: task});
-    }
-
-    changeTaskData = (newData) => {
-        let new_tasks = this.state.tasks.map((t) => {
-            if (t.id === newData.id) {
-                t = newData;
-            }
-            return t;
-        })
-        this.setState({tasks: new_tasks})
-    }
-
-    removeTask = (task) => {
-        this.setState({tasks: this.state.tasks.filter(p => p.id !== task.id)});
-    }
-
-    componentDidMount() {
+    loadTasks = async () => {
         fetch("weatherforecast")
             .then(res => res.json())
             .then(
@@ -63,6 +30,77 @@ class App extends React.Component {
                     console.log(error);
                 }
             )
+    };
+
+    setModal = (newModalState) => {
+        this.setState({modal: newModalState})
+    }
+
+    setEditModal = (newModalState) => {
+        this.setState({editModal: newModalState})
+    }
+
+    createTask = (newTaskData) => {
+        fetch('weatherforecast', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(newTaskData)
+           
+        })
+            .then((response) => {
+                this.loadTasks();
+            })
+            .catch(error => {
+                console.log(error)
+            })
+            
+    }
+
+    editTask = (task) => {
+        this.setState({editModal: true});
+        this.setState({edited: task});
+    }
+
+    changeTaskData = (newData) => {
+        fetch('weatherforecast', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(newData)
+
+        })
+            .catch(error => {
+                console.log(error)
+            })
+        this.loadTasks();
+    }
+
+    removeTask = (task) => {
+        
+        fetch('weatherforecast', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(task)
+
+        })
+            .then((response) => {
+                this.loadTasks();
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
+    componentDidMount() {
+        this.loadTasks();
       }
 
     render() {
