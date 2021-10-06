@@ -15,9 +15,6 @@ namespace Project1
 
         public static void Main(string[] args)
         {
-            BD.DatabaseHandler();
-
-
             CreateHostBuilder(args).Build().Run();
         }
 
