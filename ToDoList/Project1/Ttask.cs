@@ -12,5 +12,9 @@ namespace Project1
         public string Title { get; set; }
 
         public string Body { get; set; }
+
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+
     }
 }

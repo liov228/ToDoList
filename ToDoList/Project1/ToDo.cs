@@ -18,5 +18,11 @@ namespace Project1
 
         [Column("body")]
         public string Body { get; set; }
+
+        [Column("StartDate")]
+        public string StartDate{ get; set; }
+
+        [Column("endDate")]
+        public string EndDate { get; set; }
     }
 }

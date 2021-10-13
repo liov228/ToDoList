@@ -10,11 +10,11 @@ namespace Project1.Controllers
     
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class ToDoController : ControllerBase
     {
         private readonly IDbProvider dbProvider;
 
-        public WeatherForecastController(IDbProvider dbPrtovider)
+        public ToDoController(IDbProvider dbPrtovider)
         {
             this.dbProvider = dbPrtovider;
         }
@@ -27,12 +27,12 @@ namespace Project1.Controllers
         [HttpPost] 
         public void Post([FromBody] Ttask ttask)
         {
-            dbProvider.AddTask(ttask.Title,ttask.Body);
+            dbProvider.AddTask(ttask.Title,ttask.Body,ttask.StartDate,ttask.EndDate);
         }
         [HttpPut]
         public void Put([FromBody] Ttask ttask)
         {
-            dbProvider.ChangeTask(ttask.Id ,ttask.Title,ttask.Body);
+            dbProvider.ChangeTask(ttask.Id ,ttask.Title,ttask.Body, ttask.EndDate);
         }
         [HttpDelete]
         public void Delete([FromBody] Ttask ttask)

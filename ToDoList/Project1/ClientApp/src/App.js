@@ -1,10 +1,8 @@
 import React from 'react';
 import './styles/App.css';
 import TaskList from './components/TaskList';
-import MyButton from './components/MyButton/MyButton';
 import TaskForm from './components/TaskForm';
-import MyModal from './components/MyModal/MyModal';
-import TaskEditForm from  './components/TaskEditForm';
+
 
 
 class App extends React.Component {
@@ -12,19 +10,19 @@ class App extends React.Component {
         super(props);
         this.state = {
             tasks: [],
-            modal: false,
-            editModal: false,
-            edited: 0,
+            current: {id: -1, title: "", body: ""},
+            isformvisible: true,
         };
     }
     loadTasks = async () => {
-        fetch("weatherforecast")
+        fetch("todo")
             .then(res => res.json())
             .then(
                 (result) => {
                     this.setState({
                         tasks: result,
                     });
+                    console.log(result)
                 },
                 (error) => {
                     console.log(error);
@@ -32,16 +30,8 @@ class App extends React.Component {
             )
     };
 
-    setModal = (newModalState) => {
-        this.setState({modal: newModalState})
-    }
-
-    setEditModal = (newModalState) => {
-        this.setState({editModal: newModalState})
-    }
-
     createTask = (newTaskData) => {
-        fetch('weatherforecast', {
+        fetch('todo', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -57,15 +47,16 @@ class App extends React.Component {
                 console.log(error)
             })
             
-    }
+    };
 
-    editTask = (task) => {
-        this.setState({editModal: true});
-        this.setState({edited: task});
-    }
+    
+    shownewform = () => {
+        this.setState({ isformvisible: true });
+        this.setState({current: {id: -1, title: "", body: ""}})
+    };
 
     changeTaskData = (newData) => {
-        fetch('weatherforecast', {
+        fetch('todo', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -74,15 +65,18 @@ class App extends React.Component {
             body: JSON.stringify(newData)
 
         })
+            .then((response) => {
+                this.loadTasks();
+            })
             .catch(error => {
                 console.log(error)
             })
-        this.loadTasks();
-    }
+       
+    };
 
     removeTask = (task) => {
         
-        fetch('weatherforecast', {
+        fetch('todo', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -93,35 +87,33 @@ class App extends React.Component {
         })
             .then((response) => {
                 this.loadTasks();
+                this.setState({ current: { id: -1, title: "", body: "" } })
             })
             .catch(error => {
                 console.log(error)
             })
-    }
+    };
 
     componentDidMount() {
         this.loadTasks();
-      }
+    };
 
     render() {
         return (
             <div className="App">
-                <MyButton onClick={() => this.setState({modal: true})}>
-                    Создать
-                </MyButton>
-                <MyModal visible={this.state.modal} setVisible={this.setModal}>
-                    <TaskForm create={this.createTask} />
-                </MyModal>
-                <MyModal visible={this.state.editModal} setVisible={this.setEditModal}>
-                    <TaskEditForm edited={this.state.edited} changeTaskData={this.changeTaskData} key={this.state.edited.id}/>
-                </MyModal>
-
                 <TaskList
-                remove={this.removeTask}
-                edit={this.editTask}
-                tasks={this.state.tasks}
-                title='Список задач' />
+                    shownewform={this.shownewform}
+                    opentask={(task) => {
+                        this.setState({ current: task })}}
+                    tasks={this.state.tasks} />
 
+                {this.state.isformvisible &&
+                    <TaskForm create={this.createTask}
+                              removetask={this.removeTask}
+                              change={this.changeTaskData}
+                              currenttask={this.state.current}
+                              key={this.state.current.id}/>
+                }
             </div>
         );
     }

@@ -14,12 +14,14 @@ namespace Project1
             _context = dbContext;
         }
 
-        public async Task AddTask(string title, string body)
+        public async Task AddTask(string title, string body,string startDate,string endDate)
         {
             var task = new ToDo
             {
                 Title = title,
-                Body = body
+                Body = body,
+                StartDate = startDate,
+                EndDate = endDate
             };
             await _context.ToDos.AddAsync(task);
             await _context.SaveChangesAsync();
@@ -30,11 +32,12 @@ namespace Project1
             return _context.ToDos.ToList();
         }
 
-        public void ChangeTask(int id, string newTitle, string newBody)
+        public void ChangeTask(int id, string newTitle, string newBody,string newDate)
         {
             ToDo toDo = _context.ToDos.Where(x => x.Id == id).FirstOrDefault();
             toDo.Title = newTitle;
             toDo.Body = newBody;
+            toDo.EndDate = newDate;
             _context.SaveChanges();
         }
 

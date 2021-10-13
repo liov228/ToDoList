@@ -1,16 +1,19 @@
 import React from 'react';
+import MyButton from './MyButton/MyButton';
 import TaskItem from './TaskItem';
 
-const TaskList=({remove,edit,tasks,title})=>{
+const TaskList = ({ opentask, shownewform, tasks}) => {
     return(
-        <div>
-        <h1 style={{textAlign:'center'}}>
-        {title}
-        </h1>
-      {tasks.map((task,index)=>
-          <TaskItem remove={remove} edit={edit} number={index+1} task={task} key={task.id}/>
-      )
-      }
+        <div className="tasklist">
+        { 
+            tasks.map((task,index)=>
+                <TaskItem opentask={() => {opentask(task)}} 
+                number={index+1}
+                task={task}
+                key={task.id}/>
+            )
+        }
+        <MyButton onClick={shownewform}>Добавить</MyButton>
     </div>
     );
 };
